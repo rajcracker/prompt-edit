@@ -14,6 +14,8 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->validateCsrfTokens(except: ['webhooks/pixelforge']);
+        // Hosted behind a load balancer (Laravel Cloud): honour X-Forwarded-Proto/For.
+        $middleware->trustProxies(at: '*');
 
         $middleware->web(append: [
             HandleInertiaRequests::class,
