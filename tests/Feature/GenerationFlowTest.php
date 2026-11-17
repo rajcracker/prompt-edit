@@ -253,7 +253,8 @@ it('queues a retry when Pixelforge is overloaded, honouring Retry-After', functi
         ->assertSessionHasNoErrors();
 
     expect(Generation::sole()->status)->toBe('pending')->and(Generation::sole()->error_code)->toBe('overloaded');
-    Queue::assertPushed(SubmitGeneration::class);
+    // Waits at least Retry-After before trying again.
+    Queue::assertPushed(SubmitGeneration::class, fn (SubmitGeneration $job) => is_int($job->delay) && $job->delay >= 2);
 });
 
 it('gives up after a few attempts without charging', function () {

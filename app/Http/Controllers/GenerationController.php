@@ -52,7 +52,7 @@ class GenerationController extends Controller
                 ]);
             }
 
-            SubmitGeneration::dispatch($generation)->delay(SubmitGeneration::delay($e, $generation->submit_attempts));
+            SubmitGeneration::dispatch($generation)->delay(SubmitGeneration::backoffSeconds($e, $generation->submit_attempts));
 
             return back()->with('success', $e->userMessage().' Your image is queued and we\'ll keep retrying automatically.');
         }

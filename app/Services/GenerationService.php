@@ -197,7 +197,9 @@ class GenerationService
 
         if ($remote['status'] === Generation::FAILED) {
             $generation->error_code = $remote['error']['code'] ?? 'generation_failed';
-            $generation->error_message = ($remote['error']['message'] ?? 'The generation failed.').' You were not charged.';
+            $message = $remote['error']['message'] ?? 'The generation failed.';
+            // Pixelforge's messages usually say this already; make sure it's said exactly once.
+            $generation->error_message = str_contains(strtolower($message), 'not charged') ? $message : "{$message} You were not charged.";
         }
     }
 

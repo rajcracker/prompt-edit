@@ -58,12 +58,12 @@ class SubmitGeneration implements ShouldQueue
                 return;
             }
 
-            $this->release(self::delay($e, $generation->submit_attempts));
+            $this->release(self::backoffSeconds($e, $generation->submit_attempts));
         }
     }
 
     /** Seconds to wait: at least Retry-After, exponential backoff capped at a minute, plus jitter. */
-    public static function delay(PixelforgeException $e, int $attempt): int
+    public static function backoffSeconds(PixelforgeException $e, int $attempt): int
     {
         $backoff = $e->errorCode === 'concurrency_limit_exceeded' ? 5 : min(60, 2 ** $attempt);
 
